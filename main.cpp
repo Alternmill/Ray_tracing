@@ -51,11 +51,16 @@ int main(int argc, char *argv[]){
     world.add(make_shared<sphere>(point3(0.7,0,-2),0.5,mat_right));
     //world.add(make_shared<sphere>(point3(-0.5,0,-1.5),0.5,mat_left));
     world.add(make_shared<sphere>(point3(0,0,-1),0.5,mat_left));
-    world.add(make_shared<sphere>(point3(0,0,-1),-0.499,mat_left));
+    //world.add(make_shared<sphere>(point3(0,0,-1),-0.499,mat_left));
     world.add(make_shared<sphere>(point3(-0.3,0,-2),0.5,mat_back));
     world.add(make_shared<sphere>(point3(0,-100.5,-1),100,ground));
 
-    camera cam;
+    point3 lookfrom(3,3,2);
+    point3 lookat(0,0,-1);
+    vec3 vup(0,1,0);
+    double dist_to_focus = (lookfrom-lookat).length();
+    double aperture = 0.0;
+    camera cam(lookfrom,lookat,vup,30,aspect_ratio,aperture,dist_to_focus);
     
     //RENDER
     ofstream outp;
