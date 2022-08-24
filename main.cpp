@@ -42,14 +42,16 @@ const int rendering_depth = 50;
 int main(int argc, char *argv[]){
     
     //MATERIALS
-    shared_ptr<metal> mat1 = make_shared<metal>(color(1,1,1));
-    shared_ptr<lambertian> mat2 = make_shared<lambertian>(color(0.5,0,0.7));
-    shared_ptr<lambertian> mat3 = make_shared<lambertian>(color(0.6,0.5,0));
+    shared_ptr<metal> mat_right = make_shared<metal>(color(0.4,0.6,1),0.3);
+    shared_ptr<lambertian> mat_left  = make_shared<lambertian>(color(0.5,0,0.7));
+    shared_ptr<lambertian> ground = make_shared<lambertian>(color(0.2,0.2,0.2));
+    shared_ptr<metal> mat_back = make_shared<metal>(color(0.4,0.6,0.1),0.5);
     
     hittable_list world;
-    world.add(make_shared<sphere>(point3(0.6,0,-1),0.5,mat1));
-    world.add(make_shared<sphere>(point3(-0.6,0,-1),0.5,mat2));
-    world.add(make_shared<sphere>(point3(0,-100.5,-1),100,mat3));
+    world.add(make_shared<sphere>(point3(0.6,0,-1),0.5,mat_right));
+    world.add(make_shared<sphere>(point3(-0.6,0,-1),0.5,mat_left));
+    world.add(make_shared<sphere>(point3(0,0,-2),0.5,mat_back));
+    world.add(make_shared<sphere>(point3(0,-100.5,-1),100,ground));
 
     camera cam;
     
