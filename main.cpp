@@ -35,27 +35,46 @@ color ray_color(const ray& r,hittable_list hit_list,int depth){
     return (1.0-t)*color(1.0, 1.0, 1.0) + t*color(0.5, 0.7, 1.0);
 }
 const double aspect_ratio = 16.0/9.0;
-const int im_width = 400, im_height = (double) im_width / aspect_ratio; 
+const int im_width = 4000, im_height = (double) im_width / aspect_ratio; 
 
 const int samples_per_pixel = 100;
 const int rendering_depth = 50;
 int main(int argc, char *argv[]){
     
     //MATERIALS
-    shared_ptr<metal> mat_right = make_shared<metal>(color(0.4,0.6,1),0.15);
+    shared_ptr<metal> mat_right = make_shared<metal>(color(0.4,0.6,1),0);
     shared_ptr<dielectric> mat_left  = make_shared<dielectric>(1.5);
     shared_ptr<lambertian> ground = make_shared<lambertian>(color(0.2,0.2,0.2));
-    shared_ptr<metal> mat_back = make_shared<metal>(color(0.4,0.6,0.1),0);
+    shared_ptr<lambertian> mat_back = make_shared<lambertian>(color(0.4,0.6,0.1));
     
     hittable_list world;
-    world.add(make_shared<sphere>(point3(0.7,0,-2),0.5,mat_right));
-    //world.add(make_shared<sphere>(point3(-0.5,0,-1.5),0.5,mat_left));
-    world.add(make_shared<sphere>(point3(0,0,-1),0.5,mat_left));
-    //world.add(make_shared<sphere>(point3(0,0,-1),-0.499,mat_left));
-    world.add(make_shared<sphere>(point3(-0.3,0,-2),0.5,mat_back));
-    world.add(make_shared<sphere>(point3(0,-100.5,-1),100,ground));
+    world.add(make_shared<sphere>(point3(0,-1000.5,-1),1000,ground));
 
-    point3 lookfrom(3,3,2);
+    for(int i = -8; i <= 8; i+=2){
+        for(int j = -8; j <= 8; j+=2){
+            double a = random_double();
+            if(abs(i)<=3 && abs(j)<=3)continue;
+            if(a<0.4){
+                world.add(make_shared<sphere>(point3(i + random_double(),0,j + random_double()),0.5,make_shared<lambertian>(color(
+                    random_double(),random_double(),random_double()))));
+            }else{
+                if(a<0.90){
+                    world.add(make_shared<sphere>(point3(i + random_double(),0,j + random_double()),0.5,make_shared<metal>(color(
+                        random_double(),random_double(),random_double()),random_double()/5)));
+                }else{
+                    world.add(make_shared<sphere>(point3(i + random_double(),0,j + random_double()),0.5,make_shared<dielectric>(1.5)));
+                }
+            }
+        }
+    }
+
+    world.add(make_shared<sphere>(point3(0,3.5,0),4,mat_right));
+    //world.add(make_shared<sphere>(point3(-0.5,0,-1.5),0.5,mat_left));
+    //world.add(make_shared<sphere>(point3(0,0,-1),0.5,mat_left));
+    //world.add(make_shared<sphere>(point3(-0.3,0,-2),0.5,mat_back));
+    
+
+    point3 lookfrom(15,3,10);
     point3 lookat(0,0,-1);
     vec3 vup(0,1,0);
     double dist_to_focus = (lookfrom-lookat).length();
@@ -74,14 +93,9 @@ int main(int argc, char *argv[]){
             color col;
             for(int k=0;k<samples_per_pixel;k++){
                 ray r = cam.get_ray(v + random_double()/(im_height-1),u + random_double()/(im_width-1));
-                //ray r = ray(point3(v + random_double(),u + random_double(), 0), vec3(0,0,1));
                 col += ray_color(r,world,rendering_depth);
             }
-           
-            //if(i == im_height - 1 && j ==0)
-            //cout<<"Q3:"<<r.dir<<endl;
-
-           //= ray_color(r,world);
+        
             write_color(outp,col,samples_per_pixel);
         }
     }
