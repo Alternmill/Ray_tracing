@@ -4,6 +4,8 @@
         "iostream": "cpp",
         "memory": "cpp",
         "cstdlib": "cpp",
-        "fstream": "cpp"
+        "fstream": "cpp",
+        "chrono": "cpp",
+        "ostream": "cpp"
     }
 }
