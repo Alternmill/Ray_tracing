@@ -2,12 +2,13 @@
 #include <fstream>
 
 #include "usefullnums.h"
-
 #include "color.h"
 #include "sphere.h"
 #include "hittable_list.h"
 #include "camera.h"
 #include "material.h"
+#include "bmp.h"
+
 using namespace std;
 int gg = 0;
 color ray_color(const ray& r,hittable_list hit_list,int depth){
@@ -35,10 +36,10 @@ color ray_color(const ray& r,hittable_list hit_list,int depth){
     return (1.0-t)*color(1.0, 1.0, 1.0) + t*color(0.5, 0.7, 1.0);
 }
 const double aspect_ratio = 16.0/9.0;
-const int im_width = 4000, im_height = (double) im_width / aspect_ratio; 
+const int im_width = 400, im_height = (double) im_width / aspect_ratio; 
 
-const int samples_per_pixel = 100;
-const int rendering_depth = 50;
+const int samples_per_pixel = 50;
+const int rendering_depth = 25;
 int main(int argc, char *argv[]){
     
     //MATERIALS
@@ -82,9 +83,9 @@ int main(int argc, char *argv[]){
     camera cam(lookfrom,lookat,vup,30,aspect_ratio,aperture,dist_to_focus);
     
     //RENDER
-    ofstream outp;
-    outp.open("image.ppm");
-    outp<<"P3\n"<<im_width<<' '<<im_height<<"\n255\n";
+    
+    BMP image(im_width,im_height,1);
+    
     for(int i=im_height-1;i>=0;i--){
         cerr << "\rProgress: " << im_height - i <<'/'<<im_height << flush;
         for(int j=0;j<im_width;j++){   
@@ -96,9 +97,9 @@ int main(int argc, char *argv[]){
                 col += ray_color(r,world,rendering_depth);
             }
         
-            write_color(outp,col,samples_per_pixel);
+            write_color(image,col,i,j,samples_per_pixel);
         }
     }
-    outp.close();
+    image.write("Test1.bmp");
     return 0;
 }
